@@ -20,7 +20,6 @@ var driveTemperature = [111, 73];
 		CPUDrop.onclick = list;
 		RAMDrop.onclick = list;
 		driveDrop.onclick = list;
-		console.log(hello);
 	}
 	
 	function list() {
@@ -34,7 +33,7 @@ var driveTemperature = [111, 73];
 		data(this.innerHTML);
 	}
 	
-	function graph(type)
+	function data(type)
 	{
 		var length;
 		var dataArea = document.getElementById("dataArea");
@@ -42,22 +41,53 @@ var driveTemperature = [111, 73];
 		if (type == "RAM")
 		{
 			length = RAMUsage.length;
-			var table = document.createElement("table");
 			
+			var table = document.createElement("table");
+			var th = document.createElement("tr");
+			th.innerHTML = "<th>"+type+"</th>" + "<th>Usage %</th>";
+			table.append(th);
+			for (var i = 0; i < length; i++)
+			{
+				var tr = document.createElement("tr");
+				tr.innerHTML = "<td>"+i+"</td>";
+				tr.innerHTML += "<td>"+RAMUsage[i]+"</td>";
+				/*tr.innerHTML += "<td>"+coreTemperature[i]+"</td>";*/
+				table.append(tr);
+			}
 			dataArea.appendChild(table);
 		}
 		if (type == "Drives")
 		{
 			length = driveUsage.length;
 			var table = document.createElement("table");
-			
+			var th = document.createElement("tr");
+			th.innerHTML = "<th>"+type+"</th>" + "<th>Usage %</th>" + "<th>Temperature</th>";
+			table.append(th);
+			for (var i = 0; i < length; i++)
+			{
+				var tr = document.createElement("tr");
+				tr.innerHTML = "<td>"+i+"</td>";
+				tr.innerHTML += "<td>"+driveUsage[i]+"</td>";
+				tr.innerHTML += "<td>"+driveTemperature[i]+"</td>";
+				table.append(tr);
+			}
 			dataArea.appendChild(table);
 		}
 		if (type == "CPU")
 		{
 			length = coreUsage.length;
 			var table = document.createElement("table");
-			
+			var th = document.createElement("tr");
+			th.innerHTML = "<th>"+type+"</th>" + "<th>Usage %</th>" + "<th>Temperature</th>";
+			table.append(th);
+			for (var i = 0; i < length; i++)
+			{
+				var tr = document.createElement("tr");
+				tr.innerHTML = "<td>"+i+"</td>";
+				tr.innerHTML += "<td>"+coreUsage[i]+"</td>";
+				tr.innerHTML += "<td>"+coreTemperature[i]+"</td>";
+				table.append(tr);
+			}
 			dataArea.appendChild(table);
 		}
 		
