@@ -51,7 +51,25 @@ table, th, td {
   outline: none;
 }
 
+.sidenav div div {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #ccccc3;
+  display: block;
+  border: none;
+  background: none;
+  width:100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
 /* On mouse-over */
 .sidenav div:hover{
   color: #f1f1f1;
+}
+
+.sidenav div div:hover{
+	color: #f1f1f1;
 }
