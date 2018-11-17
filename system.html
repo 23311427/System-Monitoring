@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<link href="system.css" type="text/css" rel="stylesheet" /> 
-		<script src="system.js" type="text/javascript"> </script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<meta charset="utf-8"/>
 	</head>
 	
@@ -18,5 +18,451 @@
 				Welcome to System Monitoring!
 			</div>
 		</div>
+		
+		<script>
+		
+		    var timer;
+			var coreUsage = [66, 47, 31, 85];
+			var coreTemperature = [90, 81, 88, 105];
+
+			var RAMUsage = 49;
+
+			var driveUsage = [55, 89];
+			var driveTemperature = [111, 73];
+
+			var driveStats = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			var driveStats2 = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			
+			var coreStats =  [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			var coreStats2 =  [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			var coreStats3 =  [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			var coreStats4 =  [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			
+			var ramStats =   [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
+			
+			var ram = 0;
+			var cpu = 0;
+			var drive = 0;
+			
+			// variables needed for the type of graph
+			var number;
+			var type;
+
+			(function() {
+				window.onload = function ()
+				{
+					google.charts.load('current', {'packages':['table', 'corechart', 'corechart']});
+					var CPUDrop = document.getElementById("CPU");
+					var RAMDrop = document.getElementById("RAM");
+					var driveDrop = document.getElementById("Drives");
+					
+					CPUDrop.onclick = list;
+					RAMDrop.onclick = list;
+					driveDrop.onclick = list;
+					fetchData();
+					setInterval(fetchData, 5000);
+				}
+				
+				function clickFunction()
+				{
+					clearInterval(timer);
+					document.getElementById("dataArea").innerHTML = "";
+					var list = document.getElementsByClassName("expand");
+					for (var i = 0; i < list.length; i++)
+					{
+						list[i].style.backgroundColor = "#303030";
+					}
+					document.getElementById("CPU").style.backgroundColor = "#303030";
+					document.getElementById("RAM").style.backgroundColor = "#303030";
+					document.getElementById("Drives").style.backgroundColor = "#303030";
+					this.style.backgroundColor = "ForestGreen";
+					
+					// graphing
+					
+					number = parseInt(this.innerHTML.charAt(this.innerHTML.search(/[0-9]/)));
+					type = this.innerHTML.charAt(2);
+					drawGraph();
+					timer = setInterval(drawGraph, 5000);
+				}
+				
+				function fetchData()
+				{
+					var url = "https://raw.githubusercontent.com/cjbohlman/SysMonitorApp_iOS/master/data.json"
+					fetch(url)
+						.then(checkStatus)
+						.then(function(responseText) {
+							var response = JSON.parse(responseText);
+							coreUsage = response.coreLoads;
+							coreTemperature = response.coreTemps;
+							
+							driveUsage = response.driveLoads;
+							driveTemperature = response.driveTemps;
+							
+							RAMUsage = response.ramUsage;
+							
+							var newArray = [RAMUsage, RAMUsage];
+							ramStats.shift();
+							ramStats.push(newArray);
+						
+						
+							newArray = [coreUsage[0], coreTemperature[0]];
+							coreStats.shift();
+							coreStats.push(newArray);
+							
+							newArray = [coreUsage[1], coreTemperature[1]];
+							coreStats2.shift();
+							coreStats2.push(newArray);
+							
+							newArray = [coreUsage[2], coreTemperature[2]];
+							coreStats3.shift();
+							coreStats3.push(newArray);
+							
+							newArray = [coreUsage[3], coreTemperature[3]];
+							coreStats4.shift();
+							coreStats4.push(newArray);
+						
+						
+							newArray = [driveUsage[0], driveTemperature[0]];
+							driveStats.shift();
+							driveStats.push(newArray);
+							
+							newArray = [driveUsage[1], driveTemperature[1]];
+							driveStats2.shift();
+							driveStats2.push(newArray);
+							
+							
+						})
+						.catch(function(error) {
+						 console.log(error);
+					  });
+					  
+					  
+					
+				}
+				
+				function drawGraph()
+				{
+					var data = new google.visualization.DataTable();
+					
+					data.addColumn("number", "Time Passed (seconds)");
+					data.addColumn("number", "Usage");
+					data.addColumn("number", "Temperature");
+					
+					for (var i = 0; i < coreStats.length; i++)
+					{
+						var time = [5 * (driveStats.length - i - 1)];
+						
+						if (type == 'R')
+						{
+							var combined = time.concat(ramStats[i]);
+						    data.addRow(combined)
+						}
+						if (type == 'C')
+						{
+							if (number == 1)
+							{						
+								var combined = time.concat(coreStats[i]);
+							}
+							if (number == 2)
+							{
+								var combined = time.concat(coreStats2[i]);
+							}
+							if (number == 3)
+							{
+								var combined = time.concat(coreStats3[i]);
+							}
+							if (number == 4)
+							{
+								var combined = time.concat(coreStats4[i]);
+							}
+						    data.addRow(combined)
+						}
+						if (type == 'D')
+						{
+							if (number == 1)
+							{
+								var combined = time.concat(driveStats[i]);
+							}
+							if (number == 2)
+							{
+								var combined = time.concat(driveStats2[i]);
+							}
+							
+						    data.addRow(combined)
+						}
+					}
+					
+					
+					var classicOptions = {
+						title: 'System Statistics',
+						width: 900,
+						height: 500,
+						// Gives each series an axis that matches the vAxes number below.
+						series: {
+						  0: {targetAxisIndex: 0},
+						  1: {targetAxisIndex: 1}
+						},
+						vAxes: {
+						  // Adds titles to each axis.
+						  0: {title: 'Usage %'},
+						  1: {title: 'Temperature (Fahrenheit)'}
+						},
+						hAxis: {
+						  ticks: [
+						  0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55
+								 ]
+						},
+						vAxis: {
+						  viewWindow: {
+							max: 100
+						  }
+						}
+					};
+					/*var materialOptions = {
+						chart: {
+						  title: 'Average Temperatures and Daylight in Iceland Throughout the Year'
+						},
+						width: 900,
+						height: 500,
+						series: {
+						  // Gives each series an axis name that matches the Y-axis below.
+						  0: {axis: 'Usage'},
+						  1: {axis: 'Temperature'}
+						},
+						axes: {
+						  // Adds labels to each axis; they don't have to match the axis names.
+						  y: {
+							Usage: {label: 'Usage'},
+							Temperature: {label: 'Temperature (Fahrenheit)'}
+						  }
+						}
+					};*/
+					var classicChart = new google.visualization.LineChart(document.getElementById("dataArea"));
+					classicChart.draw(data, classicOptions);
+				}
+				
+				function checkStatus(response) 
+				{  
+				   if (response.status >= 200 && response.status < 300) {  
+						return response.text();
+				   }
+				   else if (response.status == 410) {
+					  return Promise.reject(new Error("This state does not have any information."));       
+				   }
+				   else if (response.status == 404) {
+					   // sends back a different error when we have a 404 than when we have
+					   // a different error
+					 
+					   return Promise.reject(new Error("Sorry, we couldn't find that page")); 
+				   } else { 
+					  
+						return Promise.reject(new Error(response.status+": "+response.statusText)); 
+				   } 
+				}
+				
+				// changes the background color of the sidebar navigation to green
+				function list() {
+					document.getElementById("CPU").style.backgroundColor = "#303030";
+					document.getElementById("RAM").style.backgroundColor = "#303030";
+					document.getElementById("Drives").style.backgroundColor = "#303030";
+					var list = document.getElementsByClassName("expand");
+					for (var i = 0; i < list.length; i++)
+					{
+						list[i].style.backgroundColor = "#303030";
+					}
+					this.style.backgroundColor = "ForestGreen";
+					
+					data(this.innerHTML);
+				}
+
+				
+				function makeTable(length, type)
+				{
+					console.log("new table");
+					var data = new google.visualization.DataTable();
+					
+					if (type == "RAM")
+					{
+						data.addColumn("number", "Usage %");
+					}
+					else 
+					{
+						data.addColumn("number", "Usage %");
+						data.addColumn("number", "Temperature");
+					}
+					
+					for (var i = 0; i < length; i++)
+					{
+						if (type == "RAM")
+						{
+							var row = [RAMUsage];
+							data.addRow(row);
+						}
+						if (type == "Drives")
+						{
+							var row = [driveUsage[i], driveTemperature[i]];
+							data.addRow(row);
+						}
+						if (type == "CPU")
+						{
+							var row = [coreUsage[i], coreTemperature[i]];
+							data.addRow(row);
+						}
+					}
+					
+					var table = new google.visualization.Table(document.getElementById('dataArea'));
+
+					table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+				}
+				
+				// displays the data in a table depending on which value is clicked
+				function data(type)
+				{
+					clearInterval(timer);
+					var length;
+					var dataArea = document.getElementById("dataArea");
+					dataArea.innerHTML = "";
+					var sidebar = document.getElementById("sidebar");
+					
+					if (type == "RAM")
+					{
+						length = 1;
+						if (ram == 0)
+						{
+							ram = 1;
+							
+							// expand the sidebar when a choice is made
+							for (var i = 0; i < length; i++)
+							{
+								var div = document.createElement("div");
+								div.innerHTML = "- " + type + " " + (i+1);
+								div.id = type + "" + (i+1);
+								div.className = "expand";
+								div.onclick = clickFunction;
+								sidebar.insertBefore(div, document.getElementById("Drives"));
+							}
+							// table logic
+							makeTable(length, type);
+						}
+						else 
+						{
+							ram++;
+							if (ram % 2 == 1)
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "none";
+								}
+							}
+							else 
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "block";
+								}
+							}
+							
+							makeTable(length, type);
+						}
+					}
+					if (type == "Drives")
+					{
+						length = driveUsage.length;
+						if (drive == 0)
+						{
+							drive = 1;
+							// expand the sidebar when a choice is made
+							for (var i = 0; i < length; i++)
+							{
+								var div = document.createElement("div");
+								div.innerHTML = "- " + type + " " + (i+1);
+								div.id = type + "" + (i+1);
+								div.className = "expand";
+								div.onclick = clickFunction;
+								sidebar.insertBefore(div, document.getElementById("CPU"));
+							}
+							// table logic
+							makeTable(length, type);
+						}
+						else 
+						{
+							drive++;
+							if (drive % 2 == 1)
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "none";
+								}
+							}
+							else 
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "block";
+								}
+							}
+							
+							makeTable(length, type);
+						}
+						
+					}
+					if (type == "CPU")
+					{
+						length = coreUsage.length;
+						if (cpu == 0)
+						{
+							cpu = 1;
+							
+							// expand the sidebar when a choice is made
+							for (var i = 0; i < length; i++)
+							{
+								var div = document.createElement("div");
+								div.innerHTML = "- " + type + " " + (i+1);
+								div.id = type + "" + (i+1);
+								div.className = "expand";
+								div.onclick = clickFunction;
+								sidebar.appendChild(div);
+							}
+							// table logic
+							makeTable(length, type);
+						}
+						else 
+						{
+							cpu++;
+							if (cpu % 2 == 1)
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "none";
+								}
+							}
+							else 
+							{
+								for (var i = 0; i < length; i++)
+								{
+									var idName = type + "" + (i+1);
+									var div = document.getElementById(idName);
+									div.style.display = "block";
+								}
+							}
+							
+							makeTable(length, type);
+						}
+					}
+					
+					timer = setInterval(makeTable, 5000, length, type);
+				}
+			})();
+		</script>
 	</body>
 </html>
