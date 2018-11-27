@@ -13,15 +13,20 @@
 			<div id="CPU">CPU</div>
 		</div>
 		
+		
+		
 		<div id="data">
+			<div id="banner">
+			</div>
 			<div id="dataArea">
-				Welcome to System Monitoring!
+				Welcome to ezMonitor!
 			</div>
 		</div>
 		
 		<script>
 		
 		    var timer;
+			// these arrays store the data for one fetch request
 			var coreUsage = [66, 47, 31, 85];
 			var coreTemperature = [90, 81, 88, 105];
 
@@ -29,7 +34,8 @@
 
 			var driveUsage = [55, 89];
 			var driveTemperature = [111, 73];
-
+			
+			// array of arrays, for drawing the graphs with google charts
 			var driveStats = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
 			var driveStats2 = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]];
 			
@@ -63,6 +69,9 @@
 					setInterval(fetchData, 5000);
 				}
 				
+				/*
+					changes the color of our side navigation bar, also enables the graph drawing
+				*/
 				function clickFunction()
 				{
 					clearInterval(timer);
@@ -70,11 +79,11 @@
 					var list = document.getElementsByClassName("expand");
 					for (var i = 0; i < list.length; i++)
 					{
-						list[i].style.backgroundColor = "#303030";
+						list[i].style.backgroundColor = "#000000";
 					}
-					document.getElementById("CPU").style.backgroundColor = "#303030";
-					document.getElementById("RAM").style.backgroundColor = "#303030";
-					document.getElementById("Drives").style.backgroundColor = "#303030";
+					document.getElementById("CPU").style.backgroundColor = "#000000";
+					document.getElementById("RAM").style.backgroundColor = "#000000";
+					document.getElementById("Drives").style.backgroundColor = "#000000";
 					this.style.backgroundColor = "ForestGreen";
 					
 					// graphing
@@ -85,12 +94,15 @@
 					timer = setInterval(drawGraph, 5000);
 				}
 				
+				// makes a fetch request to the server for JSON data
 				function fetchData()
 				{
 					var url = "https://raw.githubusercontent.com/cjbohlman/SysMonitorApp_iOS/master/data.json"
 					fetch(url)
 						.then(checkStatus)
 						.then(function(responseText) {
+						
+							// response is the json object that's parsed
 							var response = JSON.parse(responseText);
 							coreUsage = response.coreLoads;
 							coreTemperature = response.coreTemps;
@@ -100,6 +112,8 @@
 							
 							RAMUsage = response.ramUsage;
 							
+							// shift, shifts the array to the right
+							// push, pushes the new data to our array of arrays
 							var newArray = [RAMUsage, RAMUsage];
 							ramStats.shift();
 							ramStats.push(newArray);
@@ -140,6 +154,8 @@
 					
 				}
 				
+				
+				// draws the graph
 				function drawGraph()
 				{
 					var data = new google.visualization.DataTable();
@@ -262,23 +278,22 @@
 				
 				// changes the background color of the sidebar navigation to green
 				function list() {
-					document.getElementById("CPU").style.backgroundColor = "#303030";
-					document.getElementById("RAM").style.backgroundColor = "#303030";
-					document.getElementById("Drives").style.backgroundColor = "#303030";
+					document.getElementById("CPU").style.backgroundColor = "#000000";
+					document.getElementById("RAM").style.backgroundColor = "#000000";
+					document.getElementById("Drives").style.backgroundColor = "#000000";
 					var list = document.getElementsByClassName("expand");
 					for (var i = 0; i < list.length; i++)
 					{
-						list[i].style.backgroundColor = "#303030";
+						list[i].style.backgroundColor = "#000000";
 					}
 					this.style.backgroundColor = "ForestGreen";
 					
 					data(this.innerHTML);
 				}
 
-				
+				// draws the table
 				function makeTable(length, type)
 				{
-					console.log("new table");
 					var data = new google.visualization.DataTable();
 					
 					if (type == "RAM")
@@ -327,6 +342,7 @@
 					if (type == "RAM")
 					{
 						length = 1;
+						// creates the individual side bar navigation bars. ram 1, ram 2, etc
 						if (ram == 0)
 						{
 							ram = 1;
@@ -344,6 +360,7 @@
 							// table logic
 							makeTable(length, type);
 						}
+						// if they are created depending on if it is showing already or not, hide or display them
 						else 
 						{
 							ram++;

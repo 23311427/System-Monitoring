@@ -1,19 +1,50 @@
+.expand {
+	font-size: 10px;
+}
+
 .sidenav {
   height: 100%;
   width: 12%;
   position: fixed;
-  z-index: 1;
+  /*z-index: 1;*/
   top: 0px;
   left: 0px;
-  background-color: #303030;
-  overflow-x: hidden;
+  background-color: #000000;
+  /*overflow-x: hidden;*/
+  /*overflow: auto;*/
   padding-top: 20px;
   font-family: sans-serif;
 }
 
-table, th, td {
-	border: 1px solid black;
-	border-collapse: collapse;
+#RAM {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+#Drives {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+#CPU {
+	font-weight: bold;
+	font-size: 24px;
+}
+
+#banner {
+	background-image: url("cpu_button.png");
+	background-repeat: repeat-x;
+	padding-left: 20px;
+	height: 50px;
+	width: 100%;
+	margin: 0 auto;
+	text-align: left;
+	font-size: 40px;
+	color: #19d338;
+	/*overflow: visible;
+	background-position: center center;
+	background-size: contain;*/
+	position: absolute;
 }
 
 #dataArea {
@@ -23,17 +54,19 @@ table, th, td {
 	margin: 0 auto;
 	text-align: center;
 	font-size: 40px;
+	color: #19d338;
 }
+
 #data {
 	width: 88%;
 	height: 100%;
 	position: fixed;
-	z-index: 2;
+	/*z-index: 2;*/
 	left: 12%;
 	top: 0px;
 	overflow: auto;
-	background-color: #e6e6e6;
 	font-family: sans-serif;
+	background-color: #303030;
 }
 
 /* Style the sidenav links and the dropdown button */
@@ -45,10 +78,11 @@ table, th, td {
   display: block;
   border: none;
   background: none;
-  width:100%;
+  width: 100%;
   text-align: left;
   cursor: pointer;
   outline: none;
+  border-bottom: 1px solid white;
 }
 
 .sidenav div div {
